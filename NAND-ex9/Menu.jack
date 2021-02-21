@@ -1,0 +1,161 @@
+class Menu{
+
+	field boolean isCyclic, exit;
+	field int difficulty, cursor;
+
+	constructor Menu new(){
+		let isCyclic = false;
+		let difficulty = 1;
+		let cursor = 0;
+		let exit = false;
+		return this;
+	}
+
+	method void run(){
+		var char key;
+		do SnakeGame.define_static();
+		do SnakeGame.drawBorder(5,3,26,12);
+		do Menu.writeTitles();
+		do printDifficulty();
+		do printCyclic();
+		do moveCursor(0);
+		while (~(exit)){
+			let key = Keyboard.keyPressed();
+			if (key = 130){ // left is pressed
+				//do snake.changeDirection(3);
+			}
+			if (key = 131){ // up is pressed
+				do moveCursor(-1);
+			}
+			if (key = 132){ // right is pressed
+				//do snake.changeDirection(1);
+			}
+			if (key = 133){ // down is pressed
+				do moveCursor(1);
+			}
+			if (key = 128){ // down is pressed
+				do doAction();
+			}
+			while (~(key = 0)){
+				let key = Keyboard.keyPressed();
+			}
+		}
+		return;
+	}
+
+	method void doAction(){
+		var SnakeGame game;
+		if(cursor = 0){
+			let game = SnakeGame.new(difficulty, isCyclic);
+			do game.run();
+			do game.dispose();
+			do Screen.clearScreen();
+			let isCyclic = false;
+			let difficulty = 1;
+			let cursor = 0;
+			do SnakeGame.drawBorder(5,3,26,12);
+			do Menu.writeTitles();
+			do printDifficulty();
+			do printCyclic();
+			do moveCursor(0);
+		}
+		if(cursor = 1){
+			let difficulty = difficulty + 1;
+			if (difficulty > 3){
+				let difficulty = 1;
+			}
+			do printDifficulty();
+		}
+		if(cursor = 2){
+			let isCyclic = ~isCyclic;
+			do printCyclic();
+		}
+		if(cursor = 3){
+			let exit = true;
+		}
+		return;
+	}
+
+	method void printDifficulty(){
+		var String printString;
+		do Output.moveCursor(10, 38);
+		if (difficulty = 1){
+			let printString = "Easy  ";
+		}
+		if (difficulty = 2){
+			let printString = "Medium";
+		}
+		if (difficulty = 3){
+			let printString = "Hard  ";
+		}
+		do Output.printString(printString);
+		do printString.dispose();
+		return;
+	}
+
+	method void printCyclic(){
+		var String printString;
+		do Output.moveCursor(12, 38);
+		if (isCyclic){
+			let printString = "True ";
+		}
+		else {
+			let printString = "False";
+		}
+		do Output.printString(printString);
+		do printString.dispose();
+		return;
+	}
+
+	method void moveCursor(int moveBy){
+		// delete old cursor
+		var String printString;
+		do Output.moveCursor(8 + Math.multiply(cursor, 2), 21);
+		let printString = "  ";
+		do Output.printString(printString);
+		do printString.dispose();
+
+		// move cursor
+		let cursor = cursor + moveBy;
+		if (cursor > 3){
+			let cursor = 0;
+		}
+		if (cursor < 0){
+			let cursor = 3;
+		}
+
+		// draw new cursor
+		do Output.moveCursor(8 + Math.multiply(cursor, 2), 21);
+		let printString = ">>";
+		do Output.printString(printString);
+		do printString.dispose();
+
+		return;
+	}
+
+	function void writeTitles(){
+		var String printString;
+		do Output.moveCursor(8, 24);
+		let printString = "Start Game!";
+		do Output.printString(printString);
+		do printString.dispose();
+		do Output.moveCursor(10, 24);
+		let printString = "Difficulty: ";
+		do Output.printString(printString);
+		do printString.dispose();
+		do Output.moveCursor(12, 24);
+		let printString = "Cyclic: ";
+		do Output.printString(printString);
+		do printString.dispose();
+		do Output.moveCursor(14, 24);
+		let printString = "Quit Game...";
+		do Output.printString(printString);
+		do printString.dispose();
+		return;
+	}
+
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+}

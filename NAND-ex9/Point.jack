@@ -1,0 +1,71 @@
+class Point{
+	field int x;
+	field int y;
+
+	constructor Point new(int Ax, int Ay){
+		let x = Ax;
+		let y = Ay;
+		return this;
+	}
+
+	method int getX(){
+		return x;
+	}
+
+	method int getY(){
+		return y;
+	}
+
+	method void setX(int newX){
+		let x = newX;
+		return;
+	}
+
+	method void setY(int newY){
+		let y = newY;
+		return;
+	}
+
+	method boolean equal(Point other) {
+		if ((x = other.getX()) & (y = other.getY())){
+			return true;
+		}
+		return false;
+	}
+
+	method void print(){
+		do Output.printInt(x);
+		do Output.printChar(44);
+		do Output.printInt(y);
+		do Output.println();
+		return;
+	}
+
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method int whereIs(Point other){
+		var int xDiff, yDiff;
+		// do Output.moveCursor(0,0);
+		// do print();W
+		// do Output.moveCursor(1,0);
+		// do other.print();
+		let xDiff = (other.getX()) - x;
+		let yDiff = (other.getY()) - y;
+		if ((yDiff = 0) & (xDiff > 0)){
+			return 1; // right
+		}
+		if ((yDiff = 0) & (xDiff < 0)){
+			return 3; // left
+		}
+		if ((yDiff > 0) & (xDiff = 0)){
+			return 2; // down
+		}
+		if ((yDiff < 0) & (xDiff = 0)){
+			return 0; // up
+		}
+		return 5;
+	}
+}

@@ -1,0 +1,14 @@
+class Main{
+	function void main(){
+		var SnakeGame game;
+		var Menu menu;
+		var int key;
+		var int i;
+		let key = 0;
+		let i = 0;
+		let menu = Menu.new();
+		do menu.run();
+		do menu.dispose();
+		return;
+	}
+}

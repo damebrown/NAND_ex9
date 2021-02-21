@@ -1,0 +1,361 @@
+class SnakeGame {
+	
+	static int number_of_rows, number_of_cols, single_square, single_row;
+
+	/*Class fields*/
+	field int difficulty;
+	field bool is_cyclic;
+	field int score;
+	field int time;
+	field Point apple_position;
+
+	/*Class constructor*/
+	constructor SnakeGame new(int in_difficulty, bool in_is_cyclic){
+		var Point apple_pos;
+		let score = 0;
+		let time = 0;
+		let apple_pos = Point.new(13,13);
+		let apple_position = apple_pos;
+		let difficulty = in_difficulty;
+		let is_cyclic = in_is_cyclic;
+		do SnakeGame.define_static();
+		return this;
+	}
+
+	function Point point_generator(int time, int i,  int left, int top, int right, int bottom){
+		var Point new_point;
+		var int x, y, randomVal, i;
+		let x = (time * i) + time * i * i;
+		while (x > (right - 2)){
+			let x = x - right;
+		}
+		while (x < (left + 2)){
+			let x = x + left;
+		}
+		let y = (x * x * i) + ((x + 3) * i * i);
+		while (y > (bottom - 2)){
+			let y = y - bottom;
+		}
+		while (y < (top + 2)){
+			let y = y + top;
+		}
+		let new_point = Point.new(x, y);
+		return new_point;
+	}
+
+	method void dispose(){
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	function void define_static(){
+		let number_of_rows = 16;
+		let number_of_cols = 32;
+		let single_square = 16;
+		let single_row = 512;
+		return;
+	}
+
+	method void run(){
+		var Snake snake;
+		var char key;
+		var int i;
+		var boolean hasEaten;
+		do Screen.clearScreen();
+		do draw_status_bar();
+		do SnakeGame.drawBorder(0,1,31,15);
+		let snake = Snake.new();
+		let key = Keyboard.keyPressed();
+		let hasEaten = false;
+		while ((snake.move(hasEaten, is_cyclic, 1, 2, 30, 14)) & (~(key = 140))){
+			let time = time + 1;
+			let i = 0;
+			if (hasEaten){
+				let hasEaten = false;
+			}
+			let hasEaten = appleManager(snake);
+			while (i<5){
+				let key = Keyboard.keyPressed();
+				do draw_dinamus_bar();
+				// do appleManager(snake);
+				if (key = 130){ // left is pressed
+					do snake.changeDirection(3);
+				}
+				if (key = 131){ // up is pressed
+					do snake.changeDirection(0);
+				}
+				if (key = 132){ // right is pressed
+					do snake.changeDirection(1);
+				}
+				if (key = 133){ // down is pressed
+					do snake.changeDirection(2);
+				}
+				do Sys.wait(40 - Math.multiply(difficulty,8));
+				let i = i + 1;
+			}
+		}
+		do SnakeGame.gameOver();
+		return;
+	}
+
+	function void gameOver(){
+		var char key;
+		var String printString;
+
+		do SnakeGame.drawBorder(7,5,24,10);
+
+		do Output.moveCursor(10, 27);
+		let printString = "GAME OVER!";
+		do Output.printString(printString);
+		do printString.dispose();
+
+		do Output.moveCursor(12, 18);
+		let printString = "Press any key to continue...";
+		do Output.printString(printString);
+		do printString.dispose();
+
+		let key = Keyboard.keyPressed();
+		while (key=0){
+			let key = Keyboard.keyPressed();
+		}
+		return;
+	}
+
+	method void draw_status_bar(){
+		var String printString;
+		do Output.moveCursor(0, 0);
+		let printString = "Difficulty: ";
+		do Output.printString(printString);
+		do printString.dispose();
+		do Output.printInt(difficulty);
+		do Output.moveCursor(0, 25);
+		let printString = "Score: ";
+		do Output.printString(printString);
+		do printString.dispose();
+		do Output.moveCursor(0, 50);
+		let printString = "Time: ";
+		do Output.printString(printString);
+		do printString.dispose();
+		return;
+	}
+
+	method void draw_dinamus_bar(){
+		do Output.moveCursor(0, 31);
+		do Output.printInt(score);
+		do Output.moveCursor(0, 56);
+		do Output.printInt(time);
+		return;
+	}
+
+	method Point get_apple_position(){
+		return apple_position;
+	}
+
+	method boolean appleManager(Snake snake){
+		var Point new_point, head, apple_pos;
+		var int tries;
+		let head = snake.getHead();
+		let apple_pos = get_apple_position();
+		do SnakeGame.draw_apple(apple_pos);
+		if (apple_pos.equal(head)) {
+			do SnakeGame.delete_apple(apple_pos);
+			do apple_pos.dispose();
+			let tries = 0;
+			let new_point = SnakeGame.point_generator(time, tries, 1, 2, 30, 14);
+			while (snake.isOn(new_point,true)){
+				do new_point.dispose();
+				let new_point = SnakeGame.point_generator(time, tries, 1, 2, 30, 14);
+				let tries = tries + 1;
+			}
+			do SnakeGame.draw_apple(new_point);
+			let apple_position = new_point;
+			let score = score + difficulty;
+			return true;
+		}
+		return false;
+	}	
+
+	function void drawBorder(int left, int top, int right, int bottom){
+		do SnakeGame.draw_horizontal_borders(left, top, right, bottom);
+		do SnakeGame.draw_vertical_borders(left, top, right, bottom);
+		return;
+	}
+
+	function void draw_horizontal_borders(int left, int top, int right, int bottom){
+		var int i;
+		let i = left;
+		while (i < right){
+			do SnakeGame.draw_up_leaf(Math.multiply(top, single_row) + i);
+			let i = i + 1;
+			do SnakeGame.draw_down_leaf(Math.multiply(top, single_row) + i);
+			let i = i + 1;
+		}
+		let i = left;
+		while (i < right){
+			do SnakeGame.draw_down_leaf(Math.multiply(bottom,  single_row) + i);
+			let i = i + 1;
+			do SnakeGame.draw_up_leaf(Math.multiply(bottom,  single_row) + i);
+			let i = i + 1;
+		}
+		return;			
+	}
+
+
+	function void draw_vertical_borders(int left, int top, int right, int bottom){
+		var int i;
+		let i = top;
+		while (i < bottom){
+			do SnakeGame.draw_left_leaf(Math.multiply(single_row, i) + left);
+			let i = i + 1;
+			do SnakeGame.draw_right_leaf(Math.multiply(single_row, i) + left);
+			let i = i + 1;
+		}
+		let i = top;
+		while (i < bottom){
+			do SnakeGame.draw_right_leaf(Math.multiply(single_row, i) + right);
+			let i = i + 1;
+			do SnakeGame.draw_left_leaf(Math.multiply(single_row, i) + right);
+			let i = i + 1;
+		}
+		return;
+	}	
+
+
+	function void delete_apple(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, 0);
+		do Memory.poke(memAddress + 128, 0);
+		do Memory.poke(memAddress + 160, 0);
+		do Memory.poke(memAddress + 192, 0);
+		do Memory.poke(memAddress + 224, 0);
+		do Memory.poke(memAddress + 256, 0);
+		do Memory.poke(memAddress + 288, 0);
+		do Memory.poke(memAddress + 320, 0);
+		do Memory.poke(memAddress + 352, 0);
+		do Memory.poke(memAddress + 384, 0);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+
+
+	function void draw_apple(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 1536);
+		do Memory.poke(memAddress + 32, 768);
+		do Memory.poke(memAddress + 64, 15728);
+		do Memory.poke(memAddress + 96, 17036);
+		do Memory.poke(memAddress + 128, -32510);
+		do Memory.poke(memAddress + 160, -16383);
+		do Memory.poke(memAddress + 192, 8193);
+		do Memory.poke(memAddress + 224, 4097);
+		do Memory.poke(memAddress + 256, 4097);
+		do Memory.poke(memAddress + 288, 8193);
+		do Memory.poke(memAddress + 320, -16383);
+		do Memory.poke(memAddress + 352, -32766);
+		do Memory.poke(memAddress + 384, -32766);
+		do Memory.poke(memAddress + 416, 16388);
+		do Memory.poke(memAddress + 448, 10184);
+		do Memory.poke(memAddress + 480, 6192);
+		return;
+	}
+
+
+	function void draw_down_leaf(int location) {
+		var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 384);
+		do Memory.poke(memAddress + 32, 384);
+		do Memory.poke(memAddress + 64, 7608);
+		do Memory.poke(memAddress + 96, 9156);
+		do Memory.poke(memAddress + 128, 16386);
+		do Memory.poke(memAddress + 160, -32767);
+		do Memory.poke(memAddress + 192, -30703);
+		do Memory.poke(memAddress + 224, -27607);
+		do Memory.poke(memAddress + 256, -11221);
+		do Memory.poke(memAddress + 288, 26646);
+		do Memory.poke(memAddress + 320, 4104);
+		do Memory.poke(memAddress + 352, 4104);
+		do Memory.poke(memAddress + 384, 2064);
+		do Memory.poke(memAddress + 416, 1056);
+		do Memory.poke(memAddress + 448, 576);
+		do Memory.poke(memAddress + 480, 384);
+		return;
+	}
+
+	function void draw_left_leaf(int location) {
+		var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 1920);
+		do Memory.poke(memAddress + 32, 2240);
+		do Memory.poke(memAddress + 64, 4160);
+		do Memory.poke(memAddress + 96, 8624);
+		do Memory.poke(memAddress + 128, 8776);
+		do Memory.poke(memAddress + 160, 8580);
+		do Memory.poke(memAddress + 192, 4098);
+		do Memory.poke(memAddress + 224, -4095);
+		do Memory.poke(memAddress + 256, -4095);
+		do Memory.poke(memAddress + 288, 4098);
+		do Memory.poke(memAddress + 320, 8580);
+		do Memory.poke(memAddress + 352, 8776);
+		do Memory.poke(memAddress + 384, 8624);
+		do Memory.poke(memAddress + 416, 4160);
+		do Memory.poke(memAddress + 448, 2240);
+		do Memory.poke(memAddress + 480, 1920);
+		return;
+	}
+
+	function void draw_up_leaf(int location) {
+		var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 384);
+		do Memory.poke(memAddress + 32, 576);
+		do Memory.poke(memAddress + 64, 1056);
+		do Memory.poke(memAddress + 96, 2064);
+		do Memory.poke(memAddress + 128, 4104);
+		do Memory.poke(memAddress + 160, 4104);
+		do Memory.poke(memAddress + 192, 26646);
+		do Memory.poke(memAddress + 224, -11221);
+		do Memory.poke(memAddress + 256, -27607);
+		do Memory.poke(memAddress + 288, -30703);
+		do Memory.poke(memAddress + 320, -32767);
+		do Memory.poke(memAddress + 352, 16386);
+		do Memory.poke(memAddress + 384, 9156);
+		do Memory.poke(memAddress + 416, 7608);
+		do Memory.poke(memAddress + 448, 384);
+		do Memory.poke(memAddress + 480, 384);
+		return;
+	}
+
+	function void draw_right_leaf(int location) {
+		var int memAddress;
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 480);
+		do Memory.poke(memAddress + 32, 784);
+		do Memory.poke(memAddress + 64, 520);
+		do Memory.poke(memAddress + 96, 3460);
+		do Memory.poke(memAddress + 128, 4676);
+		do Memory.poke(memAddress + 160, 8580);
+		do Memory.poke(memAddress + 192, 16392);
+		do Memory.poke(memAddress + 224, -32753);
+		do Memory.poke(memAddress + 256, -32753);
+		do Memory.poke(memAddress + 288, 16392);
+		do Memory.poke(memAddress + 320, 8580);
+		do Memory.poke(memAddress + 352, 4676);
+		do Memory.poke(memAddress + 384, 3460);
+		do Memory.poke(memAddress + 416, 520);
+		do Memory.poke(memAddress + 448, 784);
+		do Memory.poke(memAddress + 480, 480);
+		return;
+	}
+}

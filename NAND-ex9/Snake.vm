@@ -1,0 +1,2503 @@
+function Snake.new 3
+push constant 3
+call Memory.alloc 1
+pop pointer 0
+push constant 1
+pop this 0
+push constant 5
+pop this 1
+push this 1
+call Array.new 1
+pop this 2
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push this 1
+lt
+not
+if-goto WHILE_END0
+push constant 5
+push local 0
+add
+pop local 1
+push local 1
+push constant 6
+call Point.new 2
+pop local 2
+push local 0
+push this 2
+add
+push local 2
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+push this 2
+add
+pop pointer 1
+push that 0
+call Snake.drawTailRight 1
+pop temp 0
+push constant 1
+push this 2
+add
+pop pointer 1
+push that 0
+call Snake.drawBodyHorizontal 1
+pop temp 0
+push constant 2
+push this 2
+add
+pop pointer 1
+push that 0
+call Snake.drawBodyHorizontal 1
+pop temp 0
+push constant 3
+push this 2
+add
+pop pointer 1
+push that 0
+call Snake.drawBodyHorizontal 1
+pop temp 0
+push constant 4
+push this 2
+add
+pop pointer 1
+push that 0
+call Snake.drawHeadRight 1
+pop temp 0
+push pointer 0
+return
+function Snake.changeDirection 0
+push argument 0
+pop pointer 0
+push this 0
+push argument 1
+sub
+call Math.abs 1
+push constant 2
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 1
+pop this 0
+label IF_FALSE0
+push constant 0
+return
+function Snake.getHead 0
+push argument 0
+pop pointer 0
+push this 1
+push constant 1
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+return
+function Snake.move 7
+push argument 0
+pop pointer 0
+push pointer 0
+call Snake.findNewHead 1
+pop local 0
+push argument 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push this 1
+push constant 1
+add
+pop this 1
+push this 1
+call Array.new 1
+pop local 4
+push constant 0
+pop local 6
+label WHILE_EXP0
+push local 6
+push this 1
+push constant 1
+sub
+lt
+not
+if-goto WHILE_END0
+push local 6
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 2
+push local 6
+push local 4
+add
+push local 2
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 6
+push constant 1
+add
+pop local 6
+goto WHILE_EXP0
+label WHILE_END0
+push this 1
+push constant 1
+sub
+push local 4
+add
+push local 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push this 1
+push constant 1
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 3
+push this 2
+call Array.dispose 1
+pop temp 0
+push local 4
+pop this 2
+goto IF_END0
+label IF_FALSE0
+push constant 0
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 1
+push local 1
+call Snake.clearBlock 1
+pop temp 0
+push local 1
+call Point.dispose 1
+pop temp 0
+push constant 0
+pop local 6
+label WHILE_EXP1
+push local 6
+push this 1
+push constant 1
+sub
+lt
+not
+if-goto WHILE_END1
+push local 6
+push this 2
+add
+push local 6
+push constant 1
+add
+push this 2
+add
+pop pointer 1
+push that 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 6
+push constant 1
+add
+pop local 6
+goto WHILE_EXP1
+label WHILE_END1
+push this 1
+push constant 1
+sub
+push this 2
+add
+push local 0
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+label IF_END0
+push pointer 0
+call Snake.drawNewBody 1
+pop temp 0
+push pointer 0
+call Snake.drawTail 1
+pop temp 0
+push argument 2
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push pointer 0
+push argument 3
+push argument 4
+push argument 5
+push argument 6
+call Snake.normalizeHead 5
+pop temp 0
+label IF_FALSE1
+push local 0
+push this 0
+call Snake.drawHead 2
+pop temp 0
+push pointer 0
+push argument 3
+push argument 4
+push argument 5
+push argument 6
+call Snake.checkIfDead 5
+not
+return
+function Snake.drawNewBody 9
+push argument 0
+pop pointer 0
+push constant 0
+pop local 3
+push constant 0
+pop local 4
+push constant 0
+pop local 5
+push constant 0
+pop local 6
+push this 1
+push constant 3
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 0
+push this 1
+push constant 2
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 1
+push this 1
+push constant 1
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 2
+push local 1
+push local 0
+call Point.whereIs 2
+pop local 7
+push local 1
+push local 2
+call Point.whereIs 2
+pop local 8
+push local 7
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+pop local 3
+label IF_FALSE0
+push local 7
+push constant 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+not
+pop local 4
+label IF_FALSE1
+push local 7
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push constant 0
+not
+pop local 5
+label IF_FALSE2
+push local 7
+push constant 3
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push constant 0
+not
+pop local 6
+label IF_FALSE3
+push local 8
+push constant 0
+eq
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+push constant 0
+not
+pop local 3
+label IF_FALSE4
+push local 8
+push constant 1
+eq
+if-goto IF_TRUE5
+goto IF_FALSE5
+label IF_TRUE5
+push constant 0
+not
+pop local 4
+label IF_FALSE5
+push local 8
+push constant 2
+eq
+if-goto IF_TRUE6
+goto IF_FALSE6
+label IF_TRUE6
+push constant 0
+not
+pop local 5
+label IF_FALSE6
+push local 8
+push constant 3
+eq
+if-goto IF_TRUE7
+goto IF_FALSE7
+label IF_TRUE7
+push constant 0
+not
+pop local 6
+label IF_FALSE7
+push local 3
+push local 5
+and
+if-goto IF_TRUE8
+goto IF_FALSE8
+label IF_TRUE8
+push local 1
+call Snake.drawBodyVertical 1
+pop temp 0
+label IF_FALSE8
+push local 4
+push local 6
+and
+if-goto IF_TRUE9
+goto IF_FALSE9
+label IF_TRUE9
+push local 1
+call Snake.drawBodyHorizontal 1
+pop temp 0
+label IF_FALSE9
+push local 3
+push local 4
+and
+if-goto IF_TRUE10
+goto IF_FALSE10
+label IF_TRUE10
+push local 1
+call Snake.drawBodyTopRight 1
+pop temp 0
+label IF_FALSE10
+push local 3
+push local 6
+and
+if-goto IF_TRUE11
+goto IF_FALSE11
+label IF_TRUE11
+push local 1
+call Snake.drawBodyTopLeft 1
+pop temp 0
+label IF_FALSE11
+push local 5
+push local 4
+and
+if-goto IF_TRUE12
+goto IF_FALSE12
+label IF_TRUE12
+push local 1
+call Snake.drawBodyBottomRight 1
+pop temp 0
+label IF_FALSE12
+push local 5
+push local 6
+and
+if-goto IF_TRUE13
+goto IF_FALSE13
+label IF_TRUE13
+push local 1
+call Snake.drawBodyBottomLeft 1
+pop temp 0
+label IF_FALSE13
+push constant 0
+return
+function Snake.checkIfDead 3
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+push this 1
+push constant 1
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 1
+label WHILE_EXP0
+push local 0
+push this 1
+lt
+push constant 1
+sub
+not
+if-goto WHILE_END0
+push local 0
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 2
+push local 2
+push local 1
+call Point.equal 2
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+return
+label IF_FALSE0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push local 1
+call Point.getX 1
+push argument 3
+push constant 1
+add
+eq
+push local 1
+call Point.getX 1
+push argument 1
+push constant 1
+sub
+eq
+or
+push local 1
+call Point.getY 1
+push argument 4
+push constant 1
+add
+eq
+or
+push local 1
+call Point.getY 1
+push argument 2
+push constant 1
+sub
+eq
+or
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push constant 0
+not
+return
+label IF_FALSE1
+push constant 0
+return
+function Snake.drawTail 3
+push argument 0
+pop pointer 0
+push constant 0
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 1
+push constant 1
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 2
+push local 1
+push local 2
+call Point.whereIs 2
+pop local 0
+push local 0
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 1
+call Snake.drawTailTop 1
+pop temp 0
+label IF_FALSE0
+push local 0
+push constant 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 1
+call Snake.drawTailRight 1
+pop temp 0
+label IF_FALSE1
+push local 0
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push local 1
+call Snake.drawTailBottom 1
+pop temp 0
+label IF_FALSE2
+push local 0
+push constant 3
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push local 1
+call Snake.drawTailLeft 1
+pop temp 0
+label IF_FALSE3
+push constant 0
+return
+function Snake.drawHead 0
+push argument 1
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push argument 0
+call Snake.drawHeadUp 1
+pop temp 0
+label IF_FALSE0
+push argument 1
+push constant 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push argument 0
+call Snake.drawHeadRight 1
+pop temp 0
+label IF_FALSE1
+push argument 1
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push argument 0
+call Snake.drawHeadDown 1
+pop temp 0
+label IF_FALSE2
+push argument 1
+push constant 3
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push argument 0
+call Snake.drawHeadLeft 1
+pop temp 0
+label IF_FALSE3
+push constant 0
+return
+function Snake.dispose 2
+push argument 0
+pop pointer 0
+push constant 0
+pop local 0
+label WHILE_EXP0
+push local 0
+push this 1
+lt
+push constant 1
+sub
+not
+if-goto WHILE_END0
+push local 0
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 1
+push local 1
+call Point.dispose 1
+pop temp 0
+push local 0
+push constant 1
+add
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function Snake.normalizeHead 1
+push argument 0
+pop pointer 0
+push this 1
+push constant 1
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 0
+push local 0
+call Point.getX 1
+push argument 3
+gt
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+push local 0
+call Point.getX 1
+push argument 1
+add
+push argument 3
+sub
+push constant 1
+sub
+call Point.setX 2
+pop temp 0
+label IF_FALSE0
+push local 0
+call Point.getX 1
+push argument 1
+lt
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 0
+push local 0
+call Point.getX 1
+push argument 3
+add
+push argument 1
+sub
+push constant 1
+add
+call Point.setX 2
+pop temp 0
+label IF_FALSE1
+push local 0
+call Point.getY 1
+push argument 4
+gt
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push local 0
+push local 0
+call Point.getY 1
+push argument 2
+add
+push argument 4
+sub
+push constant 1
+sub
+call Point.setY 2
+pop temp 0
+label IF_FALSE2
+push local 0
+call Point.getY 1
+push argument 2
+lt
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push local 0
+push local 0
+call Point.getY 1
+push argument 4
+add
+push argument 2
+sub
+push constant 1
+add
+call Point.setY 2
+pop temp 0
+label IF_FALSE3
+push constant 0
+return
+function Snake.findNewHead 2
+push argument 0
+pop pointer 0
+push this 1
+push constant 1
+sub
+push this 2
+add
+pop pointer 1
+push that 0
+pop local 0
+push this 0
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push local 0
+call Point.getX 1
+push local 0
+call Point.getY 1
+push constant 1
+sub
+call Point.new 2
+pop local 1
+label IF_FALSE0
+push this 0
+push constant 1
+eq
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+push local 0
+call Point.getX 1
+push constant 1
+add
+push local 0
+call Point.getY 1
+call Point.new 2
+pop local 1
+label IF_FALSE1
+push this 0
+push constant 2
+eq
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push local 0
+call Point.getX 1
+push local 0
+call Point.getY 1
+push constant 1
+add
+call Point.new 2
+pop local 1
+label IF_FALSE2
+push this 0
+push constant 3
+eq
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+push local 0
+call Point.getX 1
+push constant 1
+sub
+push local 0
+call Point.getY 1
+call Point.new 2
+pop local 1
+label IF_FALSE3
+push local 1
+return
+function Snake.drawHeadUp 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 1056
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 576
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 384
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 384
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 960
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 1056
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 2064
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 5736
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 8772
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 16386
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 16962
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 17442
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 9252
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 4680
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 4680
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawHeadRight 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 112
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 136
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 263
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 512
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 31464
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 18854
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 14336
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 14336
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 18854
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 31464
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 512
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 263
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 136
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 112
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawHeadDown 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 4680
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 4680
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 9252
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 17442
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 16962
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 16386
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 8772
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 5736
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 2064
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 1056
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 960
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 384
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 384
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 576
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 1056
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawHeadLeft 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 3584
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 4352
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 8064
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 64
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 6305
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 26002
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 28
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 28
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 26002
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 6305
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 64
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 8064
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 4352
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 3584
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawBodyVertical 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 4136
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 4136
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 8260
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 8196
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 8452
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 4360
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 4488
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 4232
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 4100
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 2052
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 2084
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 2116
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 4136
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 4136
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawBodyHorizontal 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 28
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 3613
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 3584
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 112
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 192
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 6148
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 25603
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 3869
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 3868
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawBodyBottomRight 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 3616
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 3600
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 8200
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 7240
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 36
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 36
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 2084
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 1028
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 7672
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 4616
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawBodyBottomLeft 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 240
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 1807
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 2048
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 4320
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 4354
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 2060
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 2320
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 2336
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 4359
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 4616
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawBodyTopLeft 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 4616
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 4167
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 8224
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 9232
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 9216
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 9216
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 4664
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 4100
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 4096
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 2160
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 1935
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawBodyTopRight 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 4104
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 8056
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 1168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 2192
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 12304
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 8
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 16520
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 1800
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 16
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 3872
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 3840
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawTailTop 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 5128
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 4616
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 2184
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 2192
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 2192
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 2064
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 1296
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 1168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 1056
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 576
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 576
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 320
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 128
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawTailRight 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 4096
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 3968
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 64
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 8248
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 7300
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 264
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 16336
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 448
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 7680
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 8192
+neg
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawTailBottom 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 256
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 640
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 576
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 576
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 1056
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 2336
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 2208
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 2064
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 2320
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 2320
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 4368
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 4616
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 4168
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.drawTailLeft 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 7
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 120
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 896
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 3075
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 4224
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 8504
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 7172
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 512
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 496
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 15
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return
+function Snake.clearBlock 2
+push constant 512
+push argument 0
+call Point.getY 1
+call Math.multiply 2
+push argument 0
+call Point.getX 1
+add
+pop local 0
+push constant 16384
+push local 0
+add
+pop local 1
+push local 1
+push constant 0
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 32
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 64
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 96
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 128
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 160
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 192
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 224
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 256
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 288
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 320
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 352
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 384
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 416
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 448
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push local 1
+push constant 480
+add
+push constant 0
+call Memory.poke 2
+pop temp 0
+push constant 0
+return

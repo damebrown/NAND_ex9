@@ -1,0 +1,616 @@
+class Snake{
+	field int direction; // up = 0, right = 1, down = 2, left = 3
+	field int length;
+	field Array body;
+
+	constructor Snake new(){
+		var int i;
+		var int xCoord;
+		var Point tempPoint;
+		let direction = 1;
+		let length = 5;
+		let body = Array.new(length);
+		let i = 0;
+		while (i<length){
+			let xCoord = 5 + i;
+			let tempPoint = Point.new(xCoord,6);
+			let body[i] = tempPoint;
+			let i = i + 1;	
+		}
+		do Snake.drawTailRight(body[0]);
+		do Snake.drawBodyHorizontal(body[1]);
+		do Snake.drawBodyHorizontal(body[2]);
+		do Snake.drawBodyHorizontal(body[3]);
+		do Snake.drawHeadRight(body[4]);
+		return this;
+	}
+
+	method void changeDirection(int newDirection){
+		if (~(Math.abs(direction - newDirection) = 2)){
+			let direction = newDirection;	
+		}
+		return;
+	}
+
+	method boolean isOn(Point toCheck, boolean withHead){
+		var Point curNode;
+		var int i, limit;
+		let i = 0;
+		let limit = length - 1;
+		if (withHead){
+			let limit = length;
+		}
+		while (i < limit){
+			let curNode = body[i];
+			if (curNode.equal(toCheck)){
+				return true;
+			}
+			let i = i + 1;
+		}
+		return false;
+	}
+
+	method Point getHead(){
+		return body[length - 1];
+	}
+
+	method boolean move(boolean hasEaten, boolean isCyclic, int left, int top, int right, int bottom){
+		var Point newHead;
+		var Point toDelete, copyPoint, toPrint;
+		var Array newBody;
+		var int key;
+		var int i;
+		let newHead = findNewHead();
+		if (hasEaten){
+			let length = length + 1;
+			let newBody = Array.new(length);
+			let i = 0;
+			while (i < (length - 1)){
+				let copyPoint = body[i];
+				let newBody[i] = copyPoint;
+				let i = i + 1;
+			}
+			let newBody[length-1] = newHead;
+			let toPrint = body[length-1];
+			do body.dispose();
+			let body = newBody;
+		}
+		else {
+			let toDelete = body[0];
+			do Snake.clearBlock(toDelete);
+			do toDelete.dispose();
+			let i = 0;
+			while (i < (length - 1)){
+				let body[i] = body[i+1];
+				let i = i + 1;
+			}
+			let body[length-1] = newHead;
+		}
+		do drawNewBody();
+		do drawTail();
+		if (isCyclic){
+			do normalizeHead(left, top, right, bottom);
+		}
+		do Snake.drawHead(newHead, direction);
+		return (~checkIfDead(left, top, right, bottom));
+	}
+
+	method void drawNewBody(){
+		var Point prevNode;
+		var Point curNode;
+		var Point nextNode;
+		var boolean top,right,bottom,left;
+		var int firstDir, secondDir;
+
+		let top = false;
+		let right = false;
+		let bottom = false;
+		let left = false;
+
+		let prevNode = body[length - 3];
+		let curNode = body[length - 2];
+		let nextNode = body[length - 1];
+		//tail.whereIs(before);
+		let firstDir = curNode.whereIs(prevNode);
+		let secondDir = curNode.whereIs(nextNode);
+		// calculate one direction of conection
+		if (firstDir = 0){
+			let top = true;
+		}
+		if (firstDir = 1){
+			let right = true;
+		}
+		if (firstDir = 2){
+			let bottom = true;
+		}
+		if (firstDir = 3){
+			let left = true;
+		}
+		// calculate another direction of conection
+		if (secondDir = 0){
+			let top = true;
+		}
+		if (secondDir = 1){
+			let right = true;
+		}
+		if (secondDir = 2){
+			let bottom = true;
+		}
+		if (secondDir = 3){
+			let left = true;
+		}
+		// draw relevant piece
+		if (top & bottom){
+			do Snake.drawBodyVertical(curNode);	
+		}
+		if (right & left){
+			do Snake.drawBodyHorizontal(curNode);	
+		}
+		if (top & right){
+			do Snake.drawBodyTopRight(curNode);	
+		}
+		if (top & left){
+			do Snake.drawBodyTopLeft(curNode);	
+		}
+		if (bottom & right){
+			do Snake.drawBodyBottomRight(curNode);	
+		}
+		if (bottom & left){
+			do Snake.drawBodyBottomLeft(curNode);	
+		}
+		
+		return;
+	}
+
+	method boolean checkIfDead(int left, int top, int right, int bottom){
+		var int i;
+		var Point head;
+		var Point curNode;
+		let i = 0;
+		let head = body[length -1];
+		if(isOn(head,false)){
+			return true;
+		}
+		if ((head.getX() = (right + 1)) | (head.getX() = (left-1)) | (head.getY() = (bottom+1)) | (head.getY() = (top-1))){
+			return true;
+		}
+		return false;
+	}
+
+	method void drawTail(){
+		var int heading;
+		var Point tail, before;
+		let tail = body[0];
+		let before = body[1];
+		let heading = tail.whereIs(before);
+		if (heading = 0){ // up head
+			do Snake.drawTailTop(tail);
+		}
+		if (heading = 1){ // right head
+			do Snake.drawTailRight(tail);
+		}
+		if (heading = 2){ // down head
+			do Snake.drawTailBottom(tail);
+		}
+		if (heading = 3){ // left head
+			do Snake.drawTailLeft(tail);
+		}
+		return; 
+	}
+
+	function void drawHead(Point headToDraw, int heading){
+		if (heading = 0){ // up head
+			do Snake.drawHeadUp(headToDraw);
+		}
+		if (heading = 1){ // right head
+			do Snake.drawHeadRight(headToDraw);
+		}
+		if (heading = 2){ // down head
+			do Snake.drawHeadDown(headToDraw);
+		}
+		if (heading = 3){ // left head
+			do Snake.drawHeadLeft(headToDraw);
+		}
+		return;
+	}
+
+	method void dispose(){
+		var int i;
+		var Point curPoint;
+		let i = 0;
+		while (i < length - 1){
+			let curPoint = body[i];
+			do curPoint.dispose();
+			let i = i + 1;
+		}
+		do Memory.deAlloc(this);
+		return;
+	}
+
+	method void normalizeHead(int left, int top, int right, int bottom){
+		var Point head;
+		let head = body[length-1];
+		if ((head.getX()) > right){
+			do head.setX(head.getX() + left - right - 1);
+		}
+		if ((head.getX()) < left){
+			do head.setX(head.getX() + right - left + 1);
+		}
+		if ((head.getY()) > bottom){
+			do head.setY(head.getY() + top - bottom - 1);
+		}
+		if ((head.getY()) < top){
+			do head.setY(head.getY() + bottom - top + 1);
+		}
+		return;
+	}
+
+	method Point findNewHead(){
+		var Point currentHead, newHead;
+		let currentHead = body[length-1];
+		if (direction = 0){ // up move
+			let newHead = Point.new(currentHead.getX(), currentHead.getY() - 1);
+		}
+		if (direction = 1){ // right move
+			let newHead = Point.new(currentHead.getX() + 1, currentHead.getY());
+		}
+		if (direction = 2){ // down move
+			let newHead = Point.new(currentHead.getX(), currentHead.getY() + 1);
+		}
+		if (direction = 3){ // left move
+			let newHead = Point.new(currentHead.getX() - 1, currentHead.getY());
+		}
+		return newHead;
+	}
+
+
+	function void drawHeadUp(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 1056);
+		do Memory.poke(memAddress + 32, 576);
+		do Memory.poke(memAddress + 64, 384);
+		do Memory.poke(memAddress + 96, 384);
+		do Memory.poke(memAddress + 128, 960);
+		do Memory.poke(memAddress + 160, 1056);
+		do Memory.poke(memAddress + 192, 2064);
+		do Memory.poke(memAddress + 224, 5736);
+		do Memory.poke(memAddress + 256, 8772);
+		do Memory.poke(memAddress + 288, 16386);
+		do Memory.poke(memAddress + 320, 16962);
+		do Memory.poke(memAddress + 352, 17442);
+		do Memory.poke(memAddress + 384, 9252);
+		do Memory.poke(memAddress + 416, 4680);
+		do Memory.poke(memAddress + 448, 4680);
+		do Memory.poke(memAddress + 480, 4104);
+		return;
+	}
+
+	function void drawHeadRight(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 112);
+		do Memory.poke(memAddress + 64, 136);
+		do Memory.poke(memAddress + 96, 263);
+		do Memory.poke(memAddress + 128, 512);
+		do Memory.poke(memAddress + 160, -31464);
+		do Memory.poke(memAddress + 192, 18854);
+		do Memory.poke(memAddress + 224, 14336);
+		do Memory.poke(memAddress + 256, 14336);
+		do Memory.poke(memAddress + 288, 18854);
+		do Memory.poke(memAddress + 320, -31464);
+		do Memory.poke(memAddress + 352, 512);
+		do Memory.poke(memAddress + 384, 263);
+		do Memory.poke(memAddress + 416, 136);
+		do Memory.poke(memAddress + 448, 112);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+
+	function void drawHeadDown(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 4104);
+		do Memory.poke(memAddress + 32, 4680);
+		do Memory.poke(memAddress + 64, 4680);
+		do Memory.poke(memAddress + 96, 9252);
+		do Memory.poke(memAddress + 128, 17442);
+		do Memory.poke(memAddress + 160, 16962);
+		do Memory.poke(memAddress + 192, 16386);
+		do Memory.poke(memAddress + 224, 8772);
+		do Memory.poke(memAddress + 256, 5736);
+		do Memory.poke(memAddress + 288, 2064);
+		do Memory.poke(memAddress + 320, 1056);
+		do Memory.poke(memAddress + 352, 960);
+		do Memory.poke(memAddress + 384, 384);
+		do Memory.poke(memAddress + 416, 384);
+		do Memory.poke(memAddress + 448, 576);
+		do Memory.poke(memAddress + 480, 1056);
+		return;
+	}
+
+	function void drawHeadLeft(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 3584);
+		do Memory.poke(memAddress + 64, 4352);
+		do Memory.poke(memAddress + 96, -8064);
+		do Memory.poke(memAddress + 128, 64);
+		do Memory.poke(memAddress + 160, 6305);
+		do Memory.poke(memAddress + 192, 26002);
+		do Memory.poke(memAddress + 224, 28);
+		do Memory.poke(memAddress + 256, 28);
+		do Memory.poke(memAddress + 288, 26002);
+		do Memory.poke(memAddress + 320, 6305);
+		do Memory.poke(memAddress + 352, 64);
+		do Memory.poke(memAddress + 384, -8064);
+		do Memory.poke(memAddress + 416, 4352);
+		do Memory.poke(memAddress + 448, 3584);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+
+	function void drawBodyVertical(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 4136);
+		do Memory.poke(memAddress + 32, 4136);
+		do Memory.poke(memAddress + 64, 8260);
+		do Memory.poke(memAddress + 96, 8196);
+		do Memory.poke(memAddress + 128, 8452);
+		do Memory.poke(memAddress + 160, 4360);
+		do Memory.poke(memAddress + 192, 4488);
+		do Memory.poke(memAddress + 224, 4232);
+		do Memory.poke(memAddress + 256, 4100);
+		do Memory.poke(memAddress + 288, 2052);
+		do Memory.poke(memAddress + 320, 2084);
+		do Memory.poke(memAddress + 352, 2116);
+		do Memory.poke(memAddress + 384, 4168);
+		do Memory.poke(memAddress + 416, 4136);
+		do Memory.poke(memAddress + 448, 4136);
+		do Memory.poke(memAddress + 480, 4104);
+		return;
+	}
+	function void drawBodyHorizontal(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 28);
+		do Memory.poke(memAddress + 96, -3613);
+		do Memory.poke(memAddress + 128, 3584);
+		do Memory.poke(memAddress + 160, 0);
+		do Memory.poke(memAddress + 192, 0);
+		do Memory.poke(memAddress + 224, 112);
+		do Memory.poke(memAddress + 256, 192);
+		do Memory.poke(memAddress + 288, 6148);
+		do Memory.poke(memAddress + 320, 25603);
+		do Memory.poke(memAddress + 352, 0);
+		do Memory.poke(memAddress + 384, -3869);
+		do Memory.poke(memAddress + 416, 3868);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+	function void drawBodyBottomRight(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, -3616);
+		do Memory.poke(memAddress + 128, 3600);
+		do Memory.poke(memAddress + 160, 8);
+		do Memory.poke(memAddress + 192, 8200);
+		do Memory.poke(memAddress + 224, 7240);
+		do Memory.poke(memAddress + 256, 36);
+		do Memory.poke(memAddress + 288, 36);
+		do Memory.poke(memAddress + 320, 2084);
+		do Memory.poke(memAddress + 352, 1028);
+		do Memory.poke(memAddress + 384, -7672);
+		do Memory.poke(memAddress + 416, 4616);
+		do Memory.poke(memAddress + 448, 4168);
+		do Memory.poke(memAddress + 480, 4104);
+		return;
+	}
+	function void drawBodyBottomLeft(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 240);
+		do Memory.poke(memAddress + 96, 1807);
+		do Memory.poke(memAddress + 128, 2048);
+		do Memory.poke(memAddress + 160, 4320);
+		do Memory.poke(memAddress + 192, 4354);
+		do Memory.poke(memAddress + 224, 4096);
+		do Memory.poke(memAddress + 256, 4096);
+		do Memory.poke(memAddress + 288, 2060);
+		do Memory.poke(memAddress + 320, 2320);
+		do Memory.poke(memAddress + 352, 2336);
+		do Memory.poke(memAddress + 384, 4359);
+		do Memory.poke(memAddress + 416, 4616);
+		do Memory.poke(memAddress + 448, 4104);
+		do Memory.poke(memAddress + 480, 4104);
+		return;
+	}
+	function void drawBodyTopLeft(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 4104);
+		do Memory.poke(memAddress + 32, 4616);
+		do Memory.poke(memAddress + 64, 4168);
+		do Memory.poke(memAddress + 96, 4167);
+		do Memory.poke(memAddress + 128, 8224);
+		do Memory.poke(memAddress + 160, 9232);
+		do Memory.poke(memAddress + 192, 9216);
+		do Memory.poke(memAddress + 224, 9216);
+		do Memory.poke(memAddress + 256, 4664);
+		do Memory.poke(memAddress + 288, 4100);
+		do Memory.poke(memAddress + 320, 4096);
+		do Memory.poke(memAddress + 352, 2160);
+		do Memory.poke(memAddress + 384, 1935);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+	function void drawBodyTopRight(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 4104);
+		do Memory.poke(memAddress + 32, 4104);
+		do Memory.poke(memAddress + 64, 4168);
+		do Memory.poke(memAddress + 96, -8056);
+		do Memory.poke(memAddress + 128, 1168);
+		do Memory.poke(memAddress + 160, 2192);
+		do Memory.poke(memAddress + 192, 12304);
+		do Memory.poke(memAddress + 224, 8);
+		do Memory.poke(memAddress + 256, 8);
+		do Memory.poke(memAddress + 288, 16520);
+		do Memory.poke(memAddress + 320, 1800);
+		do Memory.poke(memAddress + 352, 16);
+		do Memory.poke(memAddress + 384, -3872);
+		do Memory.poke(memAddress + 416, 3840);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+	function void drawTailTop(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 5128);
+		do Memory.poke(memAddress + 32, 4616);
+		do Memory.poke(memAddress + 64, 4168);
+		do Memory.poke(memAddress + 96, 2184);
+		do Memory.poke(memAddress + 128, 2192);
+		do Memory.poke(memAddress + 160, 2192);
+		do Memory.poke(memAddress + 192, 2064);
+		do Memory.poke(memAddress + 224, 1296);
+		do Memory.poke(memAddress + 256, 1168);
+		do Memory.poke(memAddress + 288, 1056);
+		do Memory.poke(memAddress + 320, 576);
+		do Memory.poke(memAddress + 352, 576);
+		do Memory.poke(memAddress + 384, 320);
+		do Memory.poke(memAddress + 416, 128);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+	function void drawTailRight(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, -4096);
+		do Memory.poke(memAddress + 128, 3968);
+		do Memory.poke(memAddress + 160, 64);
+		do Memory.poke(memAddress + 192, 8248);
+		do Memory.poke(memAddress + 224, 7300);
+		do Memory.poke(memAddress + 256, 264);
+		do Memory.poke(memAddress + 288, -16336);
+		do Memory.poke(memAddress + 320, 448);
+		do Memory.poke(memAddress + 352, 7680);
+		do Memory.poke(memAddress + 384, -8192);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+	function void drawTailBottom(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 256);
+		do Memory.poke(memAddress + 96, 640);
+		do Memory.poke(memAddress + 128, 576);
+		do Memory.poke(memAddress + 160, 576);
+		do Memory.poke(memAddress + 192, 1056);
+		do Memory.poke(memAddress + 224, 2336);
+		do Memory.poke(memAddress + 256, 2208);
+		do Memory.poke(memAddress + 288, 2064);
+		do Memory.poke(memAddress + 320, 2320);
+		do Memory.poke(memAddress + 352, 2320);
+		do Memory.poke(memAddress + 384, 4368);
+		do Memory.poke(memAddress + 416, 4616);
+		do Memory.poke(memAddress + 448, 4168);
+		do Memory.poke(memAddress + 480, 4168);
+		return;
+	}
+	function void drawTailLeft(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, 7);
+		do Memory.poke(memAddress + 128, 120);
+		do Memory.poke(memAddress + 160, 896);
+		do Memory.poke(memAddress + 192, 3075);
+		do Memory.poke(memAddress + 224, 4224);
+		do Memory.poke(memAddress + 256, 8504);
+		do Memory.poke(memAddress + 288, 7172);
+		do Memory.poke(memAddress + 320, 512);
+		do Memory.poke(memAddress + 352, 496);
+		do Memory.poke(memAddress + 384, 15);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+	function void clearBlock(Point position) {
+		var int location;
+		var int memAddress;
+		let location = (512*(position.getY())) + (position.getX());
+		let memAddress = 16384 + location;
+		do Memory.poke(memAddress + 0, 0);
+		do Memory.poke(memAddress + 32, 0);
+		do Memory.poke(memAddress + 64, 0);
+		do Memory.poke(memAddress + 96, 0);
+		do Memory.poke(memAddress + 128, 0);
+		do Memory.poke(memAddress + 160, 0);
+		do Memory.poke(memAddress + 192, 0);
+		do Memory.poke(memAddress + 224, 0);
+		do Memory.poke(memAddress + 256, 0);
+		do Memory.poke(memAddress + 288, 0);
+		do Memory.poke(memAddress + 320, 0);
+		do Memory.poke(memAddress + 352, 0);
+		do Memory.poke(memAddress + 384, 0);
+		do Memory.poke(memAddress + 416, 0);
+		do Memory.poke(memAddress + 448, 0);
+		do Memory.poke(memAddress + 480, 0);
+		return;
+	}
+}
